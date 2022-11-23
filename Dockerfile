@@ -1,5 +1,5 @@
 FROM ubuntu
-MAINTAINER jlangbid13 <qjlmlangbid@tip.edu.ph>
+MAINTAINER jefferson  <qjlmlangbid@tip.edu.ph>
 
 # Skip prompts
 ARG DEBIAN_FRONTEND=noninteractive
