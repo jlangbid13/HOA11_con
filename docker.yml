@@ -34,22 +34,32 @@
   - name: Restarting docker
     command: sudo systemctl restart docker
 
-  - name: Import Dockerfile
+  - name: create build directory
+    file:
+       path: ./root/demo-dockerfile
+       state: directory
+       owner: root
+       group: root
+       mode: '0755'
+
+  - name: copy Dockerfile
     copy:
       src: ./Dockerfile
-      dest: /home/jefferson
+      dest: ./root/demo-dockerfile/Dockerfile
       owner: root
       group: root
-      mode: '0755'
+      mode: '0644'
 
-  - name: Build Dockerfile
-    shell:
-      docker build - < Dockerfile
+  - name: build container image
+    docker_image:
+      name: dockerr
+      source: build
+      build:
+        path: ./root/demo-dockerfile
+        args:
+          listen_port: 8080
+      state: present
 
-  - name: Pull docker image
+  - name: access containerized app
     shell:
-      docker pull ubuntu/apache2
-
-  - name: Access Containered Apps
-    shell:
-      docker run -it -d -p 8080:80 ubuntu/apache2
+      docker run -it -d -p 8080:80 docker
