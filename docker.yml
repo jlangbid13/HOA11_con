@@ -11,6 +11,19 @@
     changed_when: false
     when: ansible_distribution == "Ubuntu"
     
+  - name: Install required system packages
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - virtualenv
+        - python3-setuptools
+      state: latest
+      update_cache: true
+    
   - name: Install docker
     apt:
       name: docker.io
@@ -34,32 +47,22 @@
   - name: Restarting docker
     command: sudo systemctl restart docker
 
-  - name: create build directory
-    file:
-       path: ./root/demo-dockerfile
-       state: directory
-       owner: root
-       group: root
-       mode: '0755'
-
-  - name: copy Dockerfile
-    copy:
+  - name: Import Dockerfile
+   copy:
       src: ./Dockerfile
-      dest: ./root/demo-dockerfile/Dockerfile
+      dest: /home/aquino-jk
       owner: root
       group: root
-      mode: '0644'
+      mode: '0755'
 
-  - name: build container image
-    docker_image:
-      name: dockerr
-      source: build
-      build:
-        path: ./root/demo-dockerfile
-        args:
-          listen_port: 8080
-      state: present
-
-  - name: access containerized app
+  - name: Install and build Dockerfile
     shell:
-      docker run -it -d -p 8080:80 docker
+     docker build - < Dockerfile
+
+  - name: Pulling docker image
+   shell:
+     docker pull ubuntu/apache2
+
+  - name: Accessing Containerized Apps
+   shell:
+      docker run -it -d -p 8080:80 ubuntu/apache2
