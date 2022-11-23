@@ -48,9 +48,9 @@
     command: sudo systemctl restart docker
 
   - name: Import Dockerfile
-   copy:
+    copy:
       src: ./Dockerfile
-      dest: /home/aquino-jk
+      dest: /home/jefferson
       owner: root
       group: root
       mode: '0755'
@@ -60,9 +60,9 @@
      docker build - < Dockerfile
 
   - name: Pulling docker image
-   shell:
+    shell:
      docker pull ubuntu/apache2
 
   - name: Accessing Containerized Apps
-   shell:
+    shell:
       docker run -it -d -p 8080:80 ubuntu/apache2
